@@ -6,9 +6,9 @@ from models.user import User
 from models.post import Post
 from routes.api_key_auth import require_api_key
 
-comment_routes = Blueprint('comment_routes', __name__, url_prefix='/comments')
+comment_routes = Blueprint('comment_routes', __name__,)
 
-@comment_routes.route('', methods=['POST'])
+@comment_routes.route('/comments', methods=['POST'])
 @require_api_key
 def create_comment():
     try:
@@ -35,14 +35,14 @@ def create_comment():
         db.session.rollback()  # Revierte la transacción si hay error
         return jsonify({"error": str(e)}), 500
 
-@comment_routes.route('', methods=['GET'])
+@comment_routes.route('/comments', methods=['GET'])
 @require_api_key
 def get_comments():
     comments = Comment.query.order_by(Comment.created_at.desc()).all()
     return jsonify([{'id_comment': c.id, 'content': c.content, 'user_id': c.user_id, 'post_id': c.post_id} for c in comments])
 
 
-@comment_routes.route('/<int:id>', methods=['DELETE'])
+@comment_routes.route('/comments/<int:id>', methods=['DELETE'])
 @require_api_key
 def delete_comment(id):
     try:

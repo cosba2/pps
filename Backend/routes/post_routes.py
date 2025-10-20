@@ -5,9 +5,9 @@ from models.post import Post
 from models.user import User
 from routes.api_key_auth import require_api_key
 
-post_routes = Blueprint('post_routes', __name__, url_prefix='/posts')
+post_routes = Blueprint('post_routes', __name__,)
 
-@post_routes.route('', methods=['POST'])
+@post_routes.route('/posts', methods=['POST'])
 @require_api_key
 def create_post():
     try:
@@ -29,7 +29,7 @@ def create_post():
         db.session.rollback()  # Revierte la transacción si hay error
         return jsonify({"error": str(e)}), 500
 
-@post_routes.route('', methods=['GET'])
+@post_routes.route('/posts', methods=['GET'])
 @require_api_key
 def get_posts():
     posts = Post.query.order_by(Post.created_at.desc()).all()
@@ -42,7 +42,7 @@ def get_posts():
         } for p in posts
     ])
 
-@post_routes.route('/<int:id>', methods=['DELETE'])
+@post_routes.route('/posts/<int:id>', methods=['DELETE'])
 @require_api_key
 def delete_post(id):
     post = Post.query.get(id)
@@ -52,7 +52,7 @@ def delete_post(id):
     db.session.commit()
     return jsonify({'message': 'Publicación eliminada'}), 200
 
-@post_routes.route("/<int:id>", methods=["PUT"])
+@post_routes.route("/posts/<int:id>", methods=["PUT"])
 @require_api_key
 def update_post(id):
     post = Post.query.get(id)
