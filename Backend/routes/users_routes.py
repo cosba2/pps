@@ -1,4 +1,3 @@
-# Archivo: routes/users_routes.py
 from flask import Blueprint, request, jsonify
 from config.db import db
 from models.user import User
@@ -37,7 +36,7 @@ def create_user():
     return jsonify(new_user.to_dict()), 201
 
 
-# Modificar un usuario (PROTEGIDA)
+# Modificar un usuario
 @user_routes.route('/<int:id>', methods=['PUT'])
 @require_api_key
 def update_user(id):
@@ -52,7 +51,7 @@ def update_user(id):
     db.session.commit()
     return jsonify(user.to_dict())
 
-# Eliminar un usuario (PROTEGIDA)
+# Eliminar un usuario
 @user_routes.route('/<int:id>', methods=['DELETE'])
 @require_api_key
 def delete_user(id):
