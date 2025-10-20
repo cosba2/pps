@@ -3,17 +3,17 @@ from config.db import db
 from models.user import User
 from routes.api_key_auth import require_api_key
 
-user_routes = Blueprint('user_routes', __name__, url_prefix='/users')
+user_routes = Blueprint('user_routes', __name__)
 
 # Obtener todos los usuarios
-@user_routes.route('', methods=['GET'])
+@user_routes.route('/users', methods=['GET'])
 @require_api_key
 def get_users():
     users = User.query.all()
     return jsonify([user.to_dict() for user in users])
 
 # Obtener un usuario por ID
-@user_routes.route('/<int:id>', methods=['GET'])
+@user_routes.route('/users/<int:id>', methods=['GET'])
 @require_api_key
 def get_user(id):
     user = User.query.get(id)
@@ -23,7 +23,7 @@ def get_user(id):
 
 
 # Crear un usuario
-@user_routes.route('', methods=['POST'])
+@user_routes.route('/users', methods=['POST'])
 @require_api_key 
 def create_user():
     data = request.json
@@ -37,7 +37,7 @@ def create_user():
 
 
 # Modificar un usuario
-@user_routes.route('/<int:id>', methods=['PUT'])
+@user_routes.route('/users/<int:id>', methods=['PUT'])
 @require_api_key
 def update_user(id):
     user = User.query.get(id)
@@ -52,7 +52,7 @@ def update_user(id):
     return jsonify(user.to_dict())
 
 # Eliminar un usuario
-@user_routes.route('/<int:id>', methods=['DELETE'])
+@user_routes.route('/users/<int:id>', methods=['DELETE'])
 @require_api_key
 def delete_user(id):
     user = User.query.get(id)
