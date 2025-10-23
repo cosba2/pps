@@ -1,4 +1,3 @@
-# Archivo: routes/comment_routes.py
 from flask import Blueprint, request, jsonify
 from config.db import db
 from models.comment import Comment
@@ -32,7 +31,7 @@ def create_comment():
         return jsonify({"message": "Comentario creado", "comment_id": new_comment.id}), 201
 
     except Exception as e:
-        db.session.rollback()  # Revierte la transacción si hay error
+        db.session.rollback() 
         return jsonify({"error": str(e)}), 500
 
 @comment_routes.route('/comments', methods=['GET'])

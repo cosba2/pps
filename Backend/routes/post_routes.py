@@ -1,4 +1,3 @@
-# Archivo: routes/post_routes.py
 from flask import Blueprint, request, jsonify
 from config.db import db
 from models.post import Post
@@ -14,7 +13,6 @@ def create_post():
         data = request.json
         user_id = data.get('user_id')
         
-        # Verificar si el usuario existe
         user = User.query.get(user_id)
         if not user:
             return jsonify({"error": "Usuario no encontrado"}), 404
@@ -26,7 +24,7 @@ def create_post():
         return jsonify({"message": "Post creado", "post_id": new_post.id}), 201
 
     except Exception as e:
-        db.session.rollback()  # Revierte la transacción si hay error
+        db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
 @post_routes.route('/posts', methods=['GET'])

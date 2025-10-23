@@ -5,6 +5,7 @@ from config.db import db
 from models.user import User
 from models.post import Post
 from models.comment import Comment
+from flask_cors import CORS
 
 # Importar los Blueprints de las rutas
 from routes.users_routes import user_routes
@@ -17,7 +18,13 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# --- 2. CONFIGURACIÓN DE SECRETOS Y DB ---
+CORS(app, 
+     resources={r"/api/*": {"origins": "*"}}, 
+     allow_headers=["Content-Type", "X-API-Key"], 
+     supports_credentials=True
+)
+
+# --- 2. CONFIGURACIÓN DE DB ---
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 if not DATABASE_URL:
@@ -26,7 +33,6 @@ if not DATABASE_URL:
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Inicializar SQLAlchemy
 db.init_app(app)
 
 API_KEY = os.environ.get("API_KEY_SECRET")
@@ -34,7 +40,7 @@ if not API_KEY:
     print("WARNING: API_KEY_SECRET no está configurada. Las rutas protegidas fallarán.")
 
 
-# --- 3. REGISTRO DE BLUEPRINTS Y RUTAS BÁSICAS ---
+# --- 3. REGISTRO DE BLUEPRINTS Y RUTAS ---
 
 app.register_blueprint(user_routes, url_prefix='/api')
 app.register_blueprint(post_routes, url_prefix='/api')

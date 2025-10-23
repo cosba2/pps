@@ -1,9 +1,7 @@
-# Archivo: routes/api_key_auth.py
 import os
 from flask import jsonify, request
 from functools import wraps
 
-# La clave debe ser cargada aquí para ser usada en el decorador
 API_KEY = os.environ.get("API_KEY_SECRET")
 
 def require_api_key(view_function):
@@ -25,7 +23,6 @@ def require_api_key(view_function):
         if provided_key != API_KEY:
             return jsonify({"message": "Acceso denegado: API Key inválida"}), 403
 
-        # Todo correcto, pasar la solicitud
         return view_function(*args, **kwargs)
 
     return decorated_function
