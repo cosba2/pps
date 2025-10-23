@@ -27,18 +27,50 @@ class PostProvider with ChangeNotifier {
     } catch (e) {
       _error = e.toString();
     }
-
     _isLoading = false;
-    notifyListeners(); 
+    notifyListeners();
   }
 
+  //añadir post
   Future<void> addPost(String title, String content, int userId) async {
     try {
-      await _apiService.createPost(title, content, userId);
-      await fetchPosts();
+      Post newPost = await _apiService.createPost(title, content, userId);
+      _posts.insert(0, newPost);
+      _error = null;
     } catch (e) {
       _error = "Error al crear post: $e";
-      notifyListeners();
     }
+    notifyListeners();
+  }
+
+  //actualizar post
+  Future<void> updatePost(int id, String title, String content) async {
+    try {
+      await _apiService.updatePost(id, title, content);
+      
+      // actualiza el post en la lista local
+      final index = _posts.indexWhere((p) => p.id == id);
+      if (index != -1) {
+        final originalAuthor = _posts[index].author;
+        _posts[index] = Post(id: id, title: title, content: content, author: originalAuthor);
+        _error = null;
+      }
+    } catch (e) {
+      _error = "Error al actualizar post: $e";
+    }
+    notifyListeners();
+  }
+
+  //eliminar post
+  Future<void> deletePost(int id) async {
+    try {
+      await _apiService.deletePost(id);
+      
+      _posts.removeWhere((p) => p.id == id);
+      _error = null;
+    } catch (e) {
+      _error = "Error al eliminar post: $e";
+    }
+    notifyListeners();
   }
 }

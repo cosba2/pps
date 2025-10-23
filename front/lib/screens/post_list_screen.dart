@@ -1,9 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/post_provider.dart';
+import 'create_edit_post_screen.dart';
 
 class PostListScreen extends StatelessWidget {
   const PostListScreen({super.key});
+
+  Future<void> _showDeleteDialog(BuildContext context, int postId) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Confirmar Eliminación'),
+          content: const Text('¿Estás seguro de que deseas eliminar este post?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); 
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              child: const Text('Eliminar'),
+              onPressed: () {
+                context.read<PostProvider>().deletePost(postId);
+                Navigator.of(dialogContext).pop(); 
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +42,6 @@ class PostListScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Posts del Blog'),
         actions: [
-          // Botón para refrescar
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
@@ -22,19 +50,23 @@ class PostListScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: _buildBody(postProvider),
+      body: _buildBody(context, postProvider),
+      
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          // TODO: Navegar a una pantalla de "Crear Post"
-          // Ejemplo rápido de cómo llamar al método:
-          // context.read<PostProvider>().addPost("Nuevo Post desde Flutter", "Contenido...", 1);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const CreateEditPostScreen(post: null),
+            ),
+          );
         },
       ),
     );
   }
 
-  Widget _buildBody(PostProvider provider) {
+  Widget _buildBody(BuildContext context, PostProvider provider) {
     if (provider.isLoading && provider.posts.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -60,9 +92,37 @@ class PostListScreen extends StatelessWidget {
           final post = provider.posts[index];
           return ListTile(
             title: Text(post.title),
-            subtitle: Text(post.content),
+            subtitle: Text(
+              post.content,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
             leading: CircleAvatar(
-              child: Text(post.author[0]), 
+              child: Text(post.author[0]),
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Botón de Editar
+                IconButton(
+                  icon: const Icon(Icons.edit, color: Colors.blue),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CreateEditPostScreen(post: post),
+                      ),
+                    );
+                  },
+                ),
+                // Botón de Eliminar
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () {
+                    _showDeleteDialog(context, post.id);
+                  },
+                ),
+              ],
             ),
           );
         },

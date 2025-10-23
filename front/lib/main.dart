@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'screens/post_list_screen.dart';
-import 'providers/post_provider.dart';
+import 'providers/user_provider.dart';
 import 'services/api_service.dart';
 
 Future<void> main() async {
@@ -23,10 +23,10 @@ class MyApp extends StatelessWidget {
         Provider<ApiService>(
           create: (_) => ApiService(),
         ),
-        ChangeNotifierProxyProvider<ApiService, PostProvider>(
-          create: (context) => PostProvider(context.read<ApiService>()),
+        ChangeNotifierProxyProvider<ApiService, UserProvider>(
+          create: (context) => UserProvider(context.read<ApiService>()),
           update: (context, apiService, previousProvider) =>
-              PostProvider(apiService),
+              UserProvider(apiService),
         ),
       ],
       child: MaterialApp(

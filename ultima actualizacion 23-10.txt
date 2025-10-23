@@ -1,0 +1,1 @@
+funciona apikey y se muestran resultados. todavia no se puede actualizar y eliminar post creados. ultimo error es por espacio en disco seguir en pc de casa.
